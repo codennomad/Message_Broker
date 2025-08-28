@@ -1,6 +1,6 @@
 use tokio::net::TcpStream;
 use tokio_util::codec::Framed;
-use message_broker::proto::{Frame, CommandType, MessageCodec};
+use message_broker::{Frame, CommandType, MessageCodec};
 use anyhow::Result;
 use futures::{SinkExt, StreamExt};
 use bytes::Bytes;

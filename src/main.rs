@@ -1,4 +1,6 @@
 use anyhow::Result;
+use tokio::sync::broadcast;
+use crate::proto::frame::Frame;
 use tracing_subscriber;
 
 // Declarando os modulos que criamos
@@ -16,8 +18,15 @@ async fn main() -> Result<()> {
 
     tracing::info!("Iniciando o Message Broker...");
 
+    // Cria o canal de broadcast.
+    // O `Sender` (tx) envia mensagens para o canal
+    // O `Receiver` (rx) e clonado para cada assinante
+    // A capacidade (32) e o numero de mensagens que o canal pode reter se nao houver
+    // receivers ativos. Quando um receiver lendo perde mensagens, ele recebe um erro `Lagged`
+    let(tx, _rx) =  broadcast::channel::<Frame>(32);
+
     // Inicia o servidor e o mantem rodando.
-    net::server::run().await?;
+    net::server::run(tx).await?;
 
     Ok(())
 }
